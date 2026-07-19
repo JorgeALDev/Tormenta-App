@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/menuFragment">
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.T20.tormentaapp.ui.menu.MenuFragment"
+        android:label="Menu"
+        tools:layout="@layout/fragment_menu">
+
+        <action
+            android:id="@+id/action_menuFragment_to_dadosFragment"
+            app:destination="@id/dadosFragment" />
+
+        <action
+            android:id="@+id/action_menuFragment_to_livrosListFragment"
+            app:destination="@id/livrosListFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/livroWebViewFragment"
+        android:name="com.T20.tormentaapp.ui.livros.LivroWebViewFragment"
+        android:label="Livro">
+
+        <argument
+            android:name="url"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/livrosListFragment"
+        android:name="com.T20.tormentaapp.ui.livros.LivrosListFragment"
+        android:label="Livros"
+        tools:layout="@layout/fragment_livros_list">
+
+        <action
+            android:id="@+id/action_livrosListFragment_to_livroWebViewFragment"
+            app:destination="@id/livroWebViewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dadosFragment"
+        android:name="com.T20.tormentaapp.ui.dados.DadosFragment"
+        android:label="Dados"
+        tools:layout="@layout/fragment_dados" />
+
+</navigation>
