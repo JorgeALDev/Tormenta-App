@@ -3,11 +3,76 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:orientation="vertical"
+    android:paddingHorizontal="28dp"
+    android:paddingTop="64dp"
+    android:paddingBottom="32dp">
 
-    <TextView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:id="@+id/txtResultado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="_"
+            android:textColor="@color/botao_texto"
+            android:textSize="56sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtDetalhamento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text=""
+            android:textColor="@color/botao_texto"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerDados"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPendentes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:id="@+id/btnRolarPendentes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tela de Rolagem de Dados" />
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/botao_menu_shape"
+        android:paddingHorizontal="32dp"
+        android:paddingVertical="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rolar"
+            android:textColor="@color/botao_texto"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+    </LinearLayout>
 
 </LinearLayout>
