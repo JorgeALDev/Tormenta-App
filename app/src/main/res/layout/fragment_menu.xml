@@ -6,12 +6,11 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/btnLivros"
-        android:layout_width="260dp"
+        android:layout_width="128dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:orientation="horizontal"
         android:gravity="center"
         android:clickable="true"
         android:focusable="true"
@@ -19,27 +18,29 @@
         android:paddingVertical="12dp">
 
         <ImageView
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:src="@drawable/iconelivro" />
+            android:id="@+id/iconeLivro"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/iconelivro"
+            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/iconeLivro"
             android:layout_marginStart="12dp"
             android:text="Livros"
             android:textColor="@color/botao_texto"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/btnDados"
-        android:layout_width="260dp"
+        android:layout_width="128dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:orientation="horizontal"
         android:gravity="center"
         android:clickable="true"
         android:focusable="true"
@@ -47,27 +48,28 @@
         android:paddingVertical="12dp">
 
         <ImageView
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:id="@+id/iconeDado"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:src="@drawable/iconedado" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/iconeDado"
             android:layout_marginStart="12dp"
             android:text="Dados"
             android:textColor="@color/botao_texto"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/btnFichas"
-        android:layout_width="260dp"
+        android:layout_width="128dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:orientation="horizontal"
         android:gravity="center"
         android:clickable="true"
         android:focusable="true"
@@ -75,19 +77,21 @@
         android:paddingVertical="12dp">
 
         <ImageView
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:id="@+id/iconeFicha"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:src="@drawable/iconeficha" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/iconeFicha"
             android:layout_marginStart="12dp"
             android:text="Fichas"
             android:textColor="@color/botao_texto"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
