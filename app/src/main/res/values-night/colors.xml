@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cor_primaria">#D13235</color>
+    <color name="cor_fundo">#212121</color>
+    <color name="cor_superficie">#292929</color>
+    <color name="cor_texto_secundario">#B0B0B0</color>
+    <color name="botao_fundo">#292929</color>
+    <color name="botao_texto">#F3EFE9</color>
+    <color name="botao_borda">#D13235</color>
+</resources>

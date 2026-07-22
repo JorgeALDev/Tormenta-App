@@ -3,6 +3,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="cor_primaria">#D13235</color>
+    <color name="cor_fundo">#E4E1DF</color>
+    <color name="cor_superficie">#FFFFFF</color>
+    <color name="cor_texto_secundario">#6B6B6B</color>
     <color name="botao_fundo">#1A1A1A</color>
-    <color name="botao_texto">#F0C674</color>
+    <color name="botao_texto">#F3EFE9</color>
+    <color name="botao_borda">#D13235</color>
 </resources>

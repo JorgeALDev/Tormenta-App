@@ -19,6 +19,9 @@
             android:id="@+id/action_menuFragment_to_livrosListFragment"
             app:destination="@id/livrosListFragment" />
 
+        <action
+            android:id="@+id/action_menuFragment_to_livroWebViewFragment"
+            app:destination="@id/livroWebViewFragment" />
     </fragment>
 
     <fragment

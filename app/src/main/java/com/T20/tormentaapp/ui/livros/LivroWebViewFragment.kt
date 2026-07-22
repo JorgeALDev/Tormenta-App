@@ -1,32 +1,40 @@
 package com.T20.tormentaapp.ui.livros
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
 import com.T20.tormentaapp.R
 import com.T20.tormentaapp.databinding.FragmentLivroWebviewBinding
-import kotlin.getValue
 
 class LivroWebViewFragment : Fragment(R.layout.fragment_livro_webview) {
 
-    private val args: LivroWebViewFragmentArgs by navArgs()
+    private val url: String by lazy { requireArguments().getString("url", "") }
+
+    companion object {
+        fun newInstance(url: String): LivroWebViewFragment {
+            return LivroWebViewFragment().apply {
+                arguments = Bundle().apply { putString("url", url) }
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val binding = FragmentLivroWebviewBinding.bind(view)
         val webview = binding.webview
+        val prefs = requireContext().getSharedPreferences("progresso_webview", Context.MODE_PRIVATE)
 
         webview.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(
-                view: WebView?,
-                request: WebResourceRequest?
-            ): Boolean {
-                return false
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?) = false
+
+            override fun onPageFinished(view: WebView?, pageUrl: String?) {
+                super.onPageFinished(view, pageUrl)
+                if (pageUrl != null) prefs.edit().putString(url, pageUrl).apply()
             }
         }
 
@@ -39,6 +47,7 @@ class LivroWebViewFragment : Fragment(R.layout.fragment_livro_webview) {
         webview.settings.useWideViewPort = true
         webview.settings.loadWithOverviewMode = true
 
-        webview.loadUrl(args.url)
+        val urlSalva = prefs.getString(url, null)
+        webview.loadUrl(urlSalva ?: url)
     }
 }

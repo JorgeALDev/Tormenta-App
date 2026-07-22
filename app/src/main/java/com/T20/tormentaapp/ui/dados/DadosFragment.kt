@@ -36,7 +36,9 @@ class DadosFragment : Fragment(R.layout.fragment_dados) {
         somDadoId = soundPool.load(requireContext(), R.raw.rolagemdedados, 1)
 
         val binding = FragmentDadosBinding.bind(view)
-        binding.recyclerDados.layoutManager = GridLayoutManager(requireContext(), 3)
+
+        val colunas = resources.getInteger(R.integer.colunas_grid)
+        binding.recyclerDados.layoutManager = GridLayoutManager(requireContext(), colunas)
         binding.recyclerDados.adapter = DadosAdapter(DadosData.todos) { dadoClicado ->
             adicionarPendente(dadoClicado)
         }
