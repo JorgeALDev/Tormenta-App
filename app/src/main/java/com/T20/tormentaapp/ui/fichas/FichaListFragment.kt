@@ -3,23 +3,28 @@ package com.T20.tormentaapp.ui.fichas
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
+import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import com.T20.tormentaapp.R
-import com.T20.tormentaapp.databinding.FragmentLivroWebviewBinding
+import com.T20.tormentaapp.databinding.FragmentFichasBinding
 
-class FichasListFragment : Fragment(R.layout.fragment_livro_webview) {
+class FichasListFragment : Fragment(R.layout.fragment_fichas) {
 
     private val url = "https://fichasdenimb.com.br"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val binding = FragmentLivroWebviewBinding.bind(view)
+        val binding = FragmentFichasBinding.bind(view)
         val webview = binding.webview
         val prefs = requireContext().getSharedPreferences("progresso_webview", Context.MODE_PRIVATE)
+
+        CookieManager.getInstance().setAcceptCookie(true)
+        CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true)
 
         webview.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?) = false
@@ -41,5 +46,14 @@ class FichasListFragment : Fragment(R.layout.fragment_livro_webview) {
 
         val urlSalva = prefs.getString(url, null)
         webview.loadUrl(urlSalva ?: url)
+
+        binding.btnLimparFichas.setOnClickListener {
+            webview.clearCache(true)
+            webview.clearHistory()
+            WebStorage.getInstance().deleteAllData()
+            CookieManager.getInstance().removeAllCookies(null)
+            prefs.edit().remove(url).apply()
+            webview.loadUrl(url)
+        }
     }
 }
