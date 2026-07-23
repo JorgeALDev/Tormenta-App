@@ -6,19 +6,21 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import com.T20.tormentaapp.R
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.T20.tormentaapp.R
 import com.T20.tormentaapp.databinding.FragmentDadosBinding
 import kotlin.random.Random
 
 class DadosFragment : Fragment(R.layout.fragment_dados) {
+
     private lateinit var soundPool: SoundPool
     private var somDadoId: Int = 0
 
     private val dadosPendentes = mutableListOf<Dado>()
     private lateinit var pendentesAdapter: DadosPendentesAdapter
+    private var modificador = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,6 +55,33 @@ class DadosFragment : Fragment(R.layout.fragment_dados) {
         binding.btnRolarPendentes.setOnClickListener {
             rolarPendentes(binding)
         }
+
+        binding.btnModificadorMenos.setOnClickListener {
+            modificador--
+            atualizarModificador(binding)
+        }
+        binding.btnModificadorMais.setOnClickListener {
+            modificador++
+            atualizarModificador(binding)
+        }
+
+        binding.edtModificador.setOnFocusChangeListener { _, temFoco ->
+            if (temFoco) binding.edtModificador.selectAll()
+        }
+
+        binding.edtModificador.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                modificador = s?.toString()?.replace("+", "")?.toIntOrNull() ?: 0
+            }
+        })
+    }
+
+    private fun atualizarModificador(binding: FragmentDadosBinding) {
+        val texto = if (modificador >= 0) "+$modificador" else "$modificador"
+        binding.edtModificador.setText(texto)
+        binding.edtModificador.setSelection(texto.length)
     }
 
     private fun adicionarPendente(dado: Dado) {
@@ -74,6 +103,7 @@ class DadosFragment : Fragment(R.layout.fragment_dados) {
         binding.txtDetalhamento.text = ""
 
         val dadosParaRolar = dadosPendentes.toList()
+        val modificadorAtual = modificador
 
         Handler(Looper.getMainLooper()).postDelayed({
 
@@ -82,9 +112,16 @@ class DadosFragment : Fragment(R.layout.fragment_dados) {
                 valor to dado.nome.lowercase()
             }
 
-            val somaTotal = rolagens.sumOf { it.first }
-            val detalhamento = rolagens.joinToString(" + ") { (valor, nomeDado) ->
+            val somaDados = rolagens.sumOf { it.first }
+            val somaTotal = somaDados + modificadorAtual
+
+            val detalhamentoDados = rolagens.joinToString(" + ") { (valor, nomeDado) ->
                 "$valor($nomeDado)"
+            }
+            val detalhamento = when {
+                modificadorAtual > 0 -> "$detalhamentoDados + $modificadorAtual"
+                modificadorAtual < 0 -> "$detalhamentoDados - ${-modificadorAtual}"
+                else -> detalhamentoDados
             }
 
             binding.txtResultado.text = somaTotal.toString()
