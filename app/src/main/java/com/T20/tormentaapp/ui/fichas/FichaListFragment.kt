@@ -1,36 +1,20 @@
 package com.T20.tormentaapp.ui.fichas
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
+import android.os.Message
+import android.util.Log
 import android.view.View
-import android.webkit.CookieManager
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
+import android.webkit.*
 import androidx.fragment.app.Fragment
 import com.T20.tormentaapp.R
 import com.T20.tormentaapp.databinding.FragmentFichasBinding
-import com.T20.tormentaapp.util.DownloadHelper
-import com.T20.tormentaapp.util.WebViewConfigurador
+import com.T20.tormentaapp.util.*
 
 class FichasListFragment : Fragment(R.layout.fragment_fichas) {
 
     private val url = "https://fichasdenimb.com.br"
     private lateinit var popupHandler: PopupLoginHandler
-    private var urlDownloadPendente: String? = null
-
-    private val permissaoArmazenamento =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { concedida ->
-            if (concedida) {
-                urlDownloadPendente?.let { DownloadHelper.baixarPdf(requireContext(), it) }
-            }
-            urlDownloadPendente = null
-        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,11 +23,15 @@ class FichasListFragment : Fragment(R.layout.fragment_fichas) {
         val webview = binding.webview
         val prefs = requireContext().getSharedPreferences("progresso_webview", Context.MODE_PRIVATE)
 
-        CookieManager.getInstance().setAcceptCookie(true)
-        CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true)
-
+        CookieManager.getInstance().apply {
+            setAcceptCookie(true)
+            setAcceptThirdPartyCookies(webview, true)
+        }
         WebViewConfigurador.aplicarConfiguracaoPadrao(webview)
         webview.settings.setSupportMultipleWindows(true)
+
+        webview.addJavascriptInterface(BlobDownloadInterface(requireContext()), "AndroidBlobDownload")
+
 
         popupHandler = PopupLoginHandler(
             popupContainer = binding.popupContainer,
@@ -51,39 +39,71 @@ class FichasListFragment : Fragment(R.layout.fragment_fichas) {
             dominioPrincipal = url,
             onLoginConcluido = { webview.reload() }
         )
-        webview.webChromeClient = popupHandler.criarWebChromeClient()
 
+        webview.webChromeClient = object : WebChromeClient() {
+            override fun onCreateWindow(
+                view: WebView?,
+                isDialog: Boolean,
+                isUserGesture: Boolean,
+                resultMsg: Message?
+            ): Boolean {
+                if (popupHandler.criarWebChromeClient().onCreateWindow(view, isDialog, isUserGesture, resultMsg)) {
+                    return true
+                }
+
+                val transport = resultMsg?.obj as? WebView.WebViewTransport
+                transport?.let {
+                    val newWebView = WebView(requireContext())
+                    newWebView.settings.javaScriptEnabled = true
+                    newWebView.webViewClient = object : WebViewClient() {
+                        override fun onPageFinished(view: WebView?, url: String?) {
+                            super.onPageFinished(view, url)
+                            if (url != null && (url.endsWith(".pdf") || url.contains("download"))) {
+                                DownloadHelper.baixarPdf(requireContext(), url)
+                                view?.loadUrl("about:blank")
+                            }
+                        }
+                    }
+                    it.webView = newWebView
+                    resultMsg.sendToTarget()
+                    return true
+                }
+                return false
+            }
+
+            override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
+                Log.d("WebViewConsole", consoleMessage.message())
+                return super.onConsoleMessage(consoleMessage)
+            }
+        }
+
+        val guard = WebViewNavigationGuard(webview, url, url)
         webview.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?) = false
 
             override fun onPageFinished(view: WebView?, pageUrl: String?) {
                 super.onPageFinished(view, pageUrl)
-                if (pageUrl != null) prefs.edit().putString(url, pageUrl).apply()
+                if (pageUrl != null) {
+                    prefs.edit().putString(url, pageUrl).apply()
+                    guard.verificarEAvisar(pageUrl, binding.root)
+                }
+
+                view?.evaluateJavascript(JavaScriptConstants.CAPTURAR_BLOB, null)
                 view?.postDelayed({ popupHandler.injetarCorrecaoDeLogin(view) }, 1500)
             }
         }
 
         webview.setDownloadListener { downloadUrl, _, _, _, _ ->
-            solicitarDownload(downloadUrl)
+            if (downloadUrl.startsWith("data:") || downloadUrl.startsWith("blob:")) {
+                Log.w("Download", "URL não suportada diretamente: $downloadUrl")
+            } else {
+                DownloadHelper.baixarPdf(requireContext(), downloadUrl)
+            }
         }
 
         val urlSalva = prefs.getString(url, null)
         webview.loadUrl(urlSalva ?: url)
 
         binding.btnFecharPopup.setOnClickListener { popupHandler.fecharPopup() }
-    }
-
-    private fun solicitarDownload(downloadUrl: String) {
-        val precisaPermissao = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-        val temPermissao = ContextCompat.checkSelfPermission(
-            requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
-
-        if (precisaPermissao && !temPermissao) {
-            urlDownloadPendente = downloadUrl
-            permissaoArmazenamento.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        } else {
-            DownloadHelper.baixarPdf(requireContext(), downloadUrl)
-        }
     }
 }

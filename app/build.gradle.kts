@@ -49,6 +49,8 @@ dependencies {
 
     implementation("androidx.browser:browser:1.5.0")
 
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
