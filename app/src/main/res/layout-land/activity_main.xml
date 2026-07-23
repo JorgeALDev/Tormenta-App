@@ -18,8 +18,8 @@
 
     <com.google.android.material.navigationrail.NavigationRailView
         android:id="@+id/bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="72dp"
+        android:layout_height="0dp"
         android:background="@color/cor_superficie"
         app:itemTextColor="@color/nav_item_color"
         app:itemRippleColor="@color/cor_primaria"
@@ -31,7 +31,7 @@
     <FrameLayout
         android:id="@+id/container_principal"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/bottom_nav"
